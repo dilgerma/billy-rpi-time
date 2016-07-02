@@ -1,15 +1,16 @@
 package de.effectivetrainings;
 
+import com.codahale.metrics.JvmAttributeGaugeSet;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
+import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import de.effectivetrainings.metrics.InfoProvider;
 import de.effectivetrainings.metrics.ServiceInfo;
 import de.effectivetrainings.metrics.influx.InfluxConfiguration;
 import de.effectivetrainings.metrics.influx.InfluxReporter;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +23,15 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class MetricsConfig {
 
-    @Autowired
-    private MetricRegistry metricRegistry;
+
+    @Bean
+    public MetricRegistry metricRegistry() {
+        MetricRegistry metricRegistry = new MetricRegistry();
+        metricRegistry.registerAll(new JvmAttributeGaugeSet());
+        metricRegistry.registerAll(new MemoryUsageGaugeSet());
+        metricRegistry.registerAll(new GarbageCollectorMetricSet());
+        return metricRegistry;
+    }
 
     @Bean
     public InfluxReporter influxReporter() {
@@ -31,7 +39,7 @@ public class MetricsConfig {
         InfluxConfiguration influxConfiguration = influxConfig();
         MetricsProperties properties = metricsProperties();
 
-        return new InfluxReporter(metricRegistry,
+        return new InfluxReporter(metricRegistry(),
                 properties.getServiceName(),
                 MetricFilter.ALL,
                 TimeUnit.MILLISECONDS,
