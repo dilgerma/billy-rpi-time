@@ -10,13 +10,24 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.bmuschko.docker-remote-api" version "3.0.1"
+}
+
 apply plugin: 'java'
 apply plugin: 'spring-boot'
+apply plugin: 'com.bmuschko.docker-remote-api'
 
+def serviceName = 'billy-time'
+version = '0.0.1-SNAPSHOT'
+
+
+
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 
 jar {
-    baseName = 'billy-time'
-    version = '0.0.1-SNAPSHOT'
+    baseName = serviceName
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -24,6 +35,43 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url "https://jitpack.io" }
+}
+
+docker {
+    url = 'http://192.168.99.100:2376'
+}
+
+task copyJar(type: Copy) {
+    dependsOn 'jar'
+    from "build/libs/${serviceName}-${project.version}.jar"
+    into 'build/docker/'
+    rename { String fileName ->
+        fileName.replace("-${project.version}", "")
+    }
+}
+
+task createDockerfile(type: Dockerfile) {
+    destFile = project.file('build/docker/Dockerfile')
+    from 'dilgerm/rpi-app-base'
+    maintainer 'Martin Dilger <martin@effectivetrainings.de>'
+    addFile "${serviceName}.jar", "/app/application.jar"
+    entryPoint "java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/application.jar"
+}
+
+task docker(type: DockerBuildImage) {
+    dependsOn createDockerfile
+    dependsOn copyJar
+    if (System.env.DOCKER_HOST) {
+        url = "$System.env.DOCKER_HOST".replace("tcp", "https")
+        if (System.env.DOCKER_CERT_PATH) {
+            certPath = new File(System.env.DOCKER_CERT_PATH)
+
+        }
+    } else {
+        url = 'unix:///var/run/docker.sock'
+    }
+    inputDir = createDockerfile.destFile.parentFile
+    tag = "dilgerm/$serviceName:$project.version"
 }
 
 test {

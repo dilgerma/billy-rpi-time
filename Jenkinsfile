@@ -9,6 +9,12 @@ node {
     sh './gradlew integrationTest'
 
     stage 'docker-build'
+    //tasks
+    sh './gradlew docker'
+
     stage 'docker-push'
+    //tasks
+    sh 'gradlew dockerPush'
+
     stage 'deploy'
 }
