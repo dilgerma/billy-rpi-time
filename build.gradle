@@ -50,6 +50,7 @@ task copyJar(type: Copy) {
 
 task prepareDockerBuild(type: Dockerfile) {
 
+    dependsOn copyJar
     destFile = project.file('build/docker/Dockerfile')
     from 'dilgerm/rpi-app-base'
     maintainer 'Martin Dilger <martin@effectivetrainings.de>'
@@ -76,18 +77,6 @@ task prepareDockerBuild(type: Dockerfile) {
 //    inputDir = createDockerfile.destFile.parentFile
 //    tag = "dilgerm/$serviceName:$project.version"
 //}
-
-task docker(type: Exec) {
-    dependsOn prepareDockerBuild
-    workingDir 'libs/docker'
-
-    //on linux
-    def buildNumber = System.getenv("BUILD_NUMBER") ?: "0"
-    def containerName = 'dilgerm/' + serviceName + ":" + buildNumber;
-
-    executable 'docker'
-    args 'docker', 'build', '-t', '$containerName'
-}
 
 test {
     useJUnit {

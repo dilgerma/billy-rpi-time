@@ -10,13 +10,11 @@ node {
 
     stage 'docker-build'
     //tasks
-    sh './gradlew creatDockerfile'
-
-    sh 'cd build/docker && docker build'
+    sh './gradlew prepareDockerBuild'
+    sh 'cd build/docker && docker build -t dilgerm/billy-time:1.0.${env.BUILD_NUMBER}'
 
     stage 'docker-push'
     //tasks
-    sh 'gradlew dockerPush'
 
     stage 'deploy'
 }
