@@ -11,7 +11,7 @@ node {
     stage 'docker-build'
     //tasks
     sh './gradlew prepareDockerBuild'
-    sh 'cd build/docker && docker build -t dilgerm/billy-time:1.0.${env.BUILD_NUMBER}'
+    sh 'docker build -t dilgerm/billy-time:1.0.0 build/docker'
 
     stage 'docker-push'
     //tasks
