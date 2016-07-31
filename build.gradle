@@ -10,8 +10,8 @@ buildscript {
         /**
          * just because https://github.com/docker-java/docker-java/issues/537
          */
-        compile 'com.kohlschutter.junixsocket:junixsocket-common:2.0.4'
-        compile 'com.kohlschutter.junixsocket:junixsocket-native-common:2.0.4'
+        classpath 'com.kohlschutter.junixsocket:junixsocket-common:2.0.4'
+        classpath 'com.kohlschutter.junixsocket:junixsocket-native-common:2.0.4'
     }
 }
 
@@ -26,7 +26,6 @@ apply plugin: 'com.bmuschko.docker-remote-api'
 def serviceName = 'billy-time'
 version = '0.0.1-SNAPSHOT'
 
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 
 jar {
@@ -49,7 +48,8 @@ task copyJar(type: Copy) {
     }
 }
 
-task createDockerfile(type: Dockerfile) {
+task prepareDockerBuild(type: Dockerfile) {
+
     destFile = project.file('build/docker/Dockerfile')
     from 'dilgerm/rpi-app-base'
     maintainer 'Martin Dilger <martin@effectivetrainings.de>'
@@ -57,20 +57,36 @@ task createDockerfile(type: Dockerfile) {
     entryPoint "java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/application.jar"
 }
 
-task docker(type: DockerBuildImage) {
-    dependsOn createDockerfile
-    dependsOn copyJar
-    if (System.env.DOCKER_HOST) {
-        url = "$System.env.DOCKER_HOST".replace("tcp", "https")
-        if (System.env.DOCKER_CERT_PATH) {
-            certPath = new File(System.env.DOCKER_CERT_PATH)
+/**
+ * does not work on arm because https://github.com/kohlschutter/junixsocket
+ * does not seem to work on arm-architectures.
+ */
+//task docker(type: DockerBuildImage) {
+//    dependsOn createDockerfile
+//    dependsOn copyJar
+//    if (System.env.DOCKER_HOST) {
+//        url = "$System.env.DOCKER_HOST".replace("tcp", "https")
+//        if (System.env.DOCKER_CERT_PATH) {
+//            certPath = new File(System.env.DOCKER_CERT_PATH)
+//
+//        }
+//    } else {
+//        url = 'unix:///var/run/docker.sock'
+//    }
+//    inputDir = createDockerfile.destFile.parentFile
+//    tag = "dilgerm/$serviceName:$project.version"
+//}
 
-        }
-    } else {
-        url = 'unix:///var/run/docker.sock'
-    }
-    inputDir = createDockerfile.destFile.parentFile
-    tag = "dilgerm/$serviceName:$project.version"
+task docker(type: Exec) {
+    dependsOn prepareDockerBuild
+    workingDir 'libs/docker'
+
+    //on linux
+    def buildNumber = System.getenv("BUILD_NUMBER") ?: "0"
+    def containerName = 'dilgerm/' + serviceName + ":" + buildNumber;
+
+    executable 'docker'
+    args 'docker', 'build', '-t', '$containerName'
 }
 
 test {

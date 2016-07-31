@@ -10,7 +10,9 @@ node {
 
     stage 'docker-build'
     //tasks
-    sh './gradlew docker'
+    sh './gradlew creatDockerfile'
+
+    sh 'cd build/docker && docker build'
 
     stage 'docker-push'
     //tasks
