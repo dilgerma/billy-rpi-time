@@ -7,6 +7,11 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        /**
+         * just because https://github.com/docker-java/docker-java/issues/537
+         */
+        compile 'com.kohlschutter.junixsocket:junixsocket-common:2.0.4'
+        compile 'com.kohlschutter.junixsocket:junixsocket-native-common:2.0.4'
     }
 }
 
@@ -21,8 +26,6 @@ apply plugin: 'com.bmuschko.docker-remote-api'
 def serviceName = 'billy-time'
 version = '0.0.1-SNAPSHOT'
 
-
-
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 
@@ -35,10 +38,6 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url "https://jitpack.io" }
-}
-
-docker {
-    url = 'http://192.168.99.100:2376'
 }
 
 task copyJar(type: Copy) {
