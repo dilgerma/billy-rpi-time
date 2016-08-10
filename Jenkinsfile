@@ -14,7 +14,7 @@ node {
     sh 'docker build -t dilgerm/billy-time:1.0.0 build/docker'
 
     stage 'docker-push'
-    //tasks
+    docker.image('dilgerm/billy-time:1.0.0').push()
 
     stage 'deploy'
 }
