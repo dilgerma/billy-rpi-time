@@ -14,7 +14,14 @@ node {
     sh 'docker build -t dilgerm/billy-time:1.0.0 build/docker'
 
     stage 'docker-push'
-    docker.image('dilgerm/billy-time:1.0.0').push()
+    dockerBuildAndPublish {
+        repositoryName('example/project-a')
+//        tag('${BUILD_TIMESTAMP}-${GIT_REVISION,length=7}')
+        registryCredentials('docker-hub')
+        forcePull(false)
+        createFingerprints(false)
+        skipDecorate()
+    }
 
     stage 'deploy'
 }
