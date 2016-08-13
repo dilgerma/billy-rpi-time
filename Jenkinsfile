@@ -12,16 +12,8 @@ node {
     //tasks
     sh './gradlew prepareDockerBuild'
     sh 'docker build -t dilgerm/billy-time:1.0.0 build/docker'
-
-    stage 'docker-push'
-    dockerBuildAndPublish {
-        repositoryName('example/project-a')
-//        tag('${BUILD_TIMESTAMP}-${GIT_REVISION,length=7}')
-        registryCredentials('docker-hub')
-        forcePull(false)
-        createFingerprints(false)
-        skipDecorate()
-    }
-
     stage 'deploy'
+    stage 'report'
+    step(['$class' : 'InfluxDbPublisher', 'selectedTarget' : 'test'])
+
 }
