@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 @Import(MetricsConfig.InfluxConfig.class)
-@Profile("!local")
+@Profile("metrics")
 public class MetricsConfig {
 
     @Autowired
@@ -82,6 +82,7 @@ public class MetricsConfig {
     }
 
     @Configuration
+    @Profile("metrics")
     public static class InfluxConfig {
         @Bean
         public InfluxDB influxDb() {
@@ -94,7 +95,8 @@ public class MetricsConfig {
 
         @Bean
         @ConfigurationProperties(prefix = "influxdb", ignoreUnknownFields = false)
-        public static InfluxConfiguration influxConfig() {
+        public InfluxConfiguration influxConfig() {
+
             final InfluxConfiguration influxConfiguration = new InfluxConfiguration();
                 return influxConfiguration;
         }

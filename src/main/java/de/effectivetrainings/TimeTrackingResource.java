@@ -9,7 +9,7 @@ import java.util.List;
 @RestController
 public class TimeTrackingResource {
 
-    public static final String PROJECTS_URI = "projects";
+    public static final String PROJECTS_URI = "/projects";
 
     @RequestMapping(PROJECTS_URI)
     public List<String> projects() throws Exception {
