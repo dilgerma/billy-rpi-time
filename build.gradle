@@ -40,7 +40,6 @@ repositories {
 }
 
 task copyJar(type: Copy) {
-    dependsOn 'jar'
     from "build/libs/${serviceName}-${project.version}.jar"
     into 'build/docker/'
     rename { String fileName ->

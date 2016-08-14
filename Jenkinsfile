@@ -11,8 +11,12 @@ node {
     stage 'docker-build'
     //tasks
     sh './gradlew prepareDockerBuild'
-    sh 'docker build -t dilgerm/billy-time:1.0.0 build/docker'
+    def img = docker.build("dilgerm/billy-time:${env.BUILD_ID}", 'build/docker');
+    stage 'push'
+    img.push();
     stage 'deploy'
+    img.run('-p 9090:8080')
+
     stage 'report'
     step(['$class' : 'InfluxDbPublisher', 'selectedTarget' : 'test'])
 
