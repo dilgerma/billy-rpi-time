@@ -13,7 +13,9 @@ node {
     sh './gradlew prepareDockerBuild'
     def img = docker.build("dilgerm/billy-time:${env.BUILD_ID}", 'build/docker');
     stage 'push'
-    img.push();
+    docker.withRegistry('https://index.docker.io/v1/', 'docker') {
+        img.push();
+    }
     stage 'deploy'
     img.run('-p 9090:8080')
 
