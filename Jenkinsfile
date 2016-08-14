@@ -13,13 +13,15 @@ node {
     sh './gradlew prepareDockerBuild'
     def img = docker.build("dilgerm/billy-time:${env.BUILD_ID}", 'build/docker');
     stage 'push'
-    docker.withRegistry('https://index.docker.io/v1/', 'docker') {
+    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
         img.push();
+        // should happen after smoke test
+        img.push 'latest'
     }
     stage 'deploy'
-    img.run('-p 9090:8080')
+    img.run('-p 8080')
 
     stage 'report'
-    step(['$class' : 'InfluxDbPublisher', 'selectedTarget' : 'test'])
+    step(['$class' : 'InfluxDbPublisher', 'selectedTarget' : 'influx'])
 
 }
