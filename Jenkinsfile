@@ -3,7 +3,7 @@ node {
     //tasks
     checkout scm
     sh './gradlew build'
-
+    sleep 2000
     stage 'integration-test'
     //tasks
     sh './gradlew integrationTest'
@@ -20,6 +20,7 @@ node {
     }
     stage 'deploy'
     img.run('-p 8080', '-e dev')
+
 
     stage 'report'
     step(['$class' : 'InfluxDbPublisher', 'selectedTarget' : 'influx'])
