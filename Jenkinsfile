@@ -3,7 +3,7 @@ node {
     //tasks
     checkout scm
     sh './gradlew build'
-    sleep 2000
+  
     stage 'integration-test'
     //tasks
     sh './gradlew integrationTest'
