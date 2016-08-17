@@ -1,9 +1,9 @@
-package de.effectivetrainings;
+package de.effectivetrainings.times;
 
+import de.effectivetrainings.times.adapter.rest.TimeTrackingResource;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -23,8 +23,6 @@ import static org.junit.Assert.assertFalse;
 @Category(de.effectivetrainings.test.support.IntegrationTest.class)
 public class BillyTimeApplicationTests {
 
-    @Autowired
-    private TimeTrackingResource timeTrackingResource;
     @Value("${local.server.port}")
     private String serverPort;
     @Value("${server.context-path}")
@@ -46,7 +44,7 @@ public class BillyTimeApplicationTests {
                 .host("localhost")
                 .port(serverPort)
                 .path(contextPath)
-                .path(TimeTrackingResource.PROJECTS_URI)
+                .path(TimeTrackingResource.TIMES_URI)
                 .build()
                 .toUri();
     }

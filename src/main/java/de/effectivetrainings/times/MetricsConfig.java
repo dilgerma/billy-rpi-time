@@ -1,4 +1,4 @@
-package de.effectivetrainings;
+package de.effectivetrainings.times;
 
 import com.codahale.metrics.JvmAttributeGaugeSet;
 import com.codahale.metrics.MetricFilter;

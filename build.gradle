@@ -95,11 +95,14 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-hateoas')
     compile('org.projectlombok:lombok:1.16.6')
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.flywaydb:flyway-core:3.1')
 
     compile 'io.dropwizard.metrics:metrics-core:3.1.0'
     compile 'io.dropwizard.metrics:metrics-jvm:3.1.0'
     compile 'com.github.dilgerma:influxdb-reporter:0.0.6'
 
+    compile('com.h2database:h2:1.4.190')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
 }

@@ -1,0 +1,3 @@
+insert into time_booking (id,hours,billable_hours,booking_date,project_name) values (1, 1.5, 1.5, '2016-08-17 18:47:52', 'microservices-project');
+insert into time_booking (id,hours,billable_hours,booking_date,project_name) values (2, 8.5, 6.0, '2016-08-18 12:30:52', 'microservices-project');
+insert into time_booking (id,hours,billable_hours,booking_date,project_name) values (3, 8.5, 6.0, '2016-09-01 09:30:52', 'git-consulting');

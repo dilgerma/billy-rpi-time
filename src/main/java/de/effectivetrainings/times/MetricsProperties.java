@@ -1,4 +1,4 @@
-package de.effectivetrainings;
+package de.effectivetrainings.times;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
