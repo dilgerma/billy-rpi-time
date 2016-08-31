@@ -2,6 +2,7 @@ node {
     stage 'build'
     //tasks
     checkout scm
+    sh 'chmod +x gradlew'
     sh './gradlew build'
   
     stage 'integration-test'
